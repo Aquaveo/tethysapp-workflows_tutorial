@@ -1,0 +1,51 @@
+from enum import auto, unique
+
+try:
+    from enum import StrEnum  # Python 3.11+ has StrEnum as a built-in
+except ImportError:
+    from strenum import StrEnum  # Use strenum package if on Python < 3.11
+
+@unique
+class DatasetTypes(StrEnum):
+    DIRECTORY = auto()
+    FEATURES_GEOJSON = auto()
+    FEATURES_SHAPEFILE = auto()
+    JSON = auto()
+    RASTER_CONT_ASCII = auto()
+    RASTER_DISC_ASCII = auto()
+    RASTER_CONT_ASCII_TIMESERIES = auto()
+    RASTER_DISC_ASCII_TIMESERIES = auto()
+    RASTER_CONT_GEOTIFF = auto()
+    RASTER_DISC_GEOTIFF = auto()
+    RASTER_CONT_GEOTIFF_TIMESERIES = auto()
+    RASTER_DISC_GEOTIFF_TIMESERIES = auto()
+    SOILGRID_PHYSICAL_SOIL_DATA = auto()
+    TIAP_ARCINFO = auto()
+    TRIBS_CHANNEL_WIDTH = auto()
+    TRIBS_GRAPH = auto()
+    TRIBS_GRID_DATA = auto()
+    TRIBS_INPUT_FILE_JSON = auto()
+    TRIBS_MDF_RAIN_GAUGE = auto()
+    TRIBS_MDF_HYDROMET_STATION = auto()
+    TRIBS_MDI_RAIN_GAUGE = auto()
+    TRIBS_MDI_HYDROMET_STATION = auto()
+    TRIBS_NODE_LIST = auto()
+    TRIBS_OUT_CNTRL = auto()
+    TRIBS_OUT_MRF = auto()
+    TRIBS_OUT_RFT = auto()
+    TRIBS_OUT_PIXEL = auto()
+    TRIBS_OUT_QOUT = auto()
+    TRIBS_OUT_TIME_DYNAMIC = auto()
+    TRIBS_OUT_TIME_INTEGRATED = auto()
+    TRIBS_OUT_STATIONS = auto()
+    TRIBS_POINTS = auto()
+    TRIBS_RES_POLY = auto()
+    TRIBS_RES_DATA = auto()
+    TRIBS_SDF_RAIN_GAUGE = auto()
+    TRIBS_SDF_HYDROMET_STATION = auto()
+    TRIBS_TABLE_LANDUSE = auto()
+    TRIBS_TABLE_SOIL = auto()
+    TRIBS_TIN = auto()
+    GRIDDED_NETCDF = auto()
+    GRIDDED_NETCDF_TIMESERIES = auto()
+    UNKNOWN = auto()
