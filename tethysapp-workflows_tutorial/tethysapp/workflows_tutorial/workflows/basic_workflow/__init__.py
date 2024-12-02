@@ -1,5 +1,6 @@
 from ..workflow_base import WorkflowBase
-
+from tethysext.workflows.steps import SpatialInputStep
+from .attributes import PointAttributes
 
 class BasicWorkflow(WorkflowBase):
     """
@@ -30,5 +31,24 @@ class BasicWorkflow(WorkflowBase):
         """
         # Create new workflow instance
         workflow = cls(name=name, creator_id=creator_id, creator_name=creator_name)
+
+        generic_spatial_input_step = SpatialInputStep(
+            name='Generic Spatial Input Step',
+            order=10,
+            help="Use the point tool to define a location. [CHANGE THIS HELP TEXT]",
+            options={
+                'shapes': ['points'],
+                'singular_name': 'Point',
+                'plural_name': 'Points',
+                'allow_shapefile': True,
+                'allow_drawing': True,
+                'attributes': PointAttributes()
+            },
+            geoserver_name="primary_geoserver",
+            map_manager=map_manager,
+            spatial_manager=spatial_manager,
+        )
+        workflow.steps.append(generic_spatial_input_step)
+
 
         return workflow
