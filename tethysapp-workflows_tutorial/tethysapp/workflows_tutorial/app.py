@@ -1,4 +1,4 @@
-from tethys_sdk.base import TethysAppBase
+from tethys_sdk.base import TethysAppBase, url_map_maker
 from tethys_sdk.app_settings import PersistentStoreDatabaseSetting, SpatialDatasetServiceSetting, SchedulerSetting
 
 
@@ -68,3 +68,27 @@ class App(TethysAppBase):
         )
 
         return scheduler_settings
+
+    def register_url_maps(self):
+        """
+        Add controllers
+        """
+        from tethysext.workflows.controllers.workflows.workflow_router import WorkflowRouter
+        from tethysext.workflows.urls import workflows
+        from .workflows import BasicWorkflow
+
+        UrlMap = url_map_maker(self.root_url)
+        url_maps = super().register_url_maps(set_index=False)
+
+        url_maps.extend(
+            workflows.urls(
+                url_map_maker=UrlMap, 
+                app=self,
+                persistent_store_name=self.DATABASE_NAME,
+                workflow_pairs=(
+                    (BasicWorkflow, WorkflowRouter),
+                ),
+                base_template='workflows_tutorial/base.html',
+            )
+        )
+        return url_maps    
