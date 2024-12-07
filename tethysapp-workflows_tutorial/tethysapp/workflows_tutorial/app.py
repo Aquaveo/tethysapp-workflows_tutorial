@@ -1,6 +1,7 @@
 from tethys_sdk.base import TethysAppBase, url_map_maker
 from tethys_sdk.app_settings import PersistentStoreDatabaseSetting, SpatialDatasetServiceSetting, SchedulerSetting
 
+import os
 
 class App(TethysAppBase):
     """
@@ -84,11 +85,20 @@ class App(TethysAppBase):
             workflows.urls(
                 url_map_maker=UrlMap, 
                 app=self,
-                persistent_store_name=self.DATABASE_NAME,
+                persistent_store_name='workflows_tutorial_db',
                 workflow_pairs=(
                     (BasicWorkflow, WorkflowRouter),
+
                 ),
                 base_template='workflows_tutorial/base.html',
             )
         )
-        return url_maps    
+        return url_maps     
+    
+    @classmethod
+    def get_job_executables_dir(cls):
+        """
+        Returns:
+             str: the path to the directory containing the job executables.
+        """
+        return os.path.join(os.path.dirname(__file__), 'job_executables')

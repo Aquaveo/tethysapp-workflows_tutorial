@@ -1,6 +1,7 @@
 from ..workflow_base import WorkflowBase
-from tethysext.workflows.steps import SpatialInputStep
+from tethysext.workflows.steps import SpatialInputStep, JobStep
 from .attributes import PointAttributes
+from .jobs import build_jobs_callback
 
 class BasicWorkflow(WorkflowBase):
     """
@@ -44,11 +45,29 @@ class BasicWorkflow(WorkflowBase):
                 'allow_drawing': True,
                 'attributes': PointAttributes()
             },
-            geoserver_name="primary_geoserver",
+            geoserver_name=geoserver_name,
             map_manager=map_manager,
             spatial_manager=spatial_manager,
         )
         workflow.steps.append(generic_spatial_input_step)
 
 
+        generic_execute_step = JobStep(
+                name='Generic Run Step',
+                order=20,
+                help='Review input and then press the Run button to run the workflow. '
+                'Press Next after the execution completes to continue. [CHANGE THIS HELP TEXT]',
+                options={
+                    'scheduler': app.SCHEDULER_NAME,
+                    'jobs': build_jobs_callback,
+                    'working_message': 'Please wait for the execution to finish running before proceeding.',
+                    'error_message': 'An error occurred with the run. Please adjust your input and try running again.',
+                    'pending_message': 'Please run the workflow to continue.'
+                },
+                geoserver_name=geoserver_name,
+                map_manager=map_manager,
+                spatial_manager=spatial_manager,
+            )
+        workflow.steps.append(generic_execute_step)
+        
         return workflow
