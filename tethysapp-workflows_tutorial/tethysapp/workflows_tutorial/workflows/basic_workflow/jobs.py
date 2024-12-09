@@ -13,6 +13,7 @@ def build_jobs_callback(condor_workflow):
     Returns:
         list<dicts>: Condor Job dicts, one for each job.
     """
+    breakpoint
     jobs = []
     condor_env = get_condor_env()
     workflow = condor_workflow.tethys_workflow
@@ -20,6 +21,10 @@ def build_jobs_callback(condor_workflow):
     # Get the selected scenarios
     points_step = workflow.get_step_by_name('Generic Spatial Input Step')
     points_geometry = points_step.get_parameter('geometry')
+
+    post_process_tif = []
+    post_process_input_files = []
+    post_process_parents = []
 
     # Create one job per point
     for idx, point in enumerate(points_geometry.get('features', [])):
@@ -43,8 +48,33 @@ def build_jobs_callback(condor_workflow):
                 'request_cpus': REQUEST_CPUS_PER_JOB
             }
         }
-        
+
+        # Add output file as input to post processing job
+        post_process_tif.append(f'../{job_name}/{output_filename}')
+        post_process_input_files.append(output_filename)
+
+        # Add job as parent to post processing job
+        post_process_parents.append(job['name'])
+
         # Add to workflow jobs
         jobs.append(job)
+
+    # Setup post processing job
+    post_process_executable = 'run_post_process.py'
+    post_process_job = {
+        'name': 'post_processing',
+        'condorpy_template_name': 'vanilla_transfer_files',
+        'remote_input_files': [str(JOB_EXECUTABLES_DIR / post_process_executable), ],
+        'attributes': {
+            'executable': post_process_executable,
+            'arguments': [','.join(post_process_input_files)],
+            'transfer_input_files': post_process_tif,
+            'transfer_output_files': [],
+            'request_cpus': REQUEST_CPUS_PER_JOB,
+            'environment': condor_env,
+        },
+        'parents': post_process_parents,
+    }
+    jobs.append(post_process_job)
 
     return jobs

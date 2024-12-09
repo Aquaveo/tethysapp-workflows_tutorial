@@ -1,7 +1,8 @@
 from ..workflow_base import WorkflowBase
-from tethysext.workflows.steps import SpatialInputStep, JobStep
+from tethysext.workflows.steps import SpatialInputStep, JobStep, ResultsStep
 from .attributes import PointAttributes
 from .jobs import build_jobs_callback
+from .results import build_results_tabs
 
 class BasicWorkflow(WorkflowBase):
     """
@@ -69,5 +70,16 @@ class BasicWorkflow(WorkflowBase):
                 spatial_manager=spatial_manager,
             )
         workflow.steps.append(generic_execute_step)
+
+        generic_result_step = ResultsStep(
+            name='Generic Review Results',
+            order=30,
+            help='Review the results from the run step. [CHANGE THIS HELP TEXT]',
+            options={},
+        )
+        generic_execute_step.result = generic_result_step  # set as result step for condor step
+        step = build_results_tabs(geoserver_name, map_manager, spatial_manager)
+        generic_result_step.results.extend(step)
+        workflow.steps.append(generic_result_step)
         
         return workflow
