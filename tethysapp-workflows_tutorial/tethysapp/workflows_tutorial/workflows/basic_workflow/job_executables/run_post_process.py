@@ -1,12 +1,5 @@
 #!/opt/tethys-python
-"""
-********************************************************************************
-* Name: run_post_process.py
-* Author: nswain
-* Created On: December 28, 2023
-* Copyright: (c) Aquaveo 2023
-********************************************************************************
-"""
+
 import json
 import math
 from pprint import pprint
@@ -15,6 +8,34 @@ import pandas as pd
 
 from tethysext.workflows.services.workflows.decorators import workflow_step_job
 
+def form_point_feature(x, y, point_name):
+    """Generate a GeoJSON feature for a point."""
+    return {
+        "type": "Feature",
+        "properties": {
+            "name": point_name,
+        },
+        "geometry": {
+            "type": "Point",
+            "coordinates": [x, y]
+        }
+    }
+
+def form_connecting_line_feature(start_point, end_point, first_point_name, second_point_name):
+    """Generate a GeoJSON feature for a connecting line between two points."""
+    return {
+        "type": "Feature",
+        "properties": {
+            "name": f"Connecting Line for {first_point_name} and {second_point_name}",
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [start_point[0], start_point[1]],
+                [end_point[0], end_point[1]]
+            ]
+        }
+    }
 
 @workflow_step_job
 def main(
@@ -25,11 +46,6 @@ def main(
     input_files = extra_args[0].split(',')
     print(f'Input Files: {input_files}')
 
-    # Get points geometry from spatial input step
-    points = params_json['Generic Spatial Input Step']['parameters']['geometry']
-    print('Points:')
-    pprint(points)
-
     # Get series data from input files
     series = {}
     for series_file in input_files:
@@ -38,14 +54,50 @@ def main(
             s = json.loads(f.read())
         series[s['name']] = s
 
-    for name, s in series.items():
-        # Print out the data
-        print(f'Series {name}:')
-        pprint(s, compact=True)
+    for s_name, s in series.items():
+        print(s_name)
+        print(s)
 
-    # 5. Add to GeoJSON
-    print('\n\nAdding plot properties to GeoJSON features...')
-    assert len(points['features']) == len(series)
+        geojson_features = []
+        # Variable to use for connecting lines
+        previous_point = None
+        new_point_name = "Original Point"
+        counter = 2
+        for x, y in zip(s['x'], s['y']):
+            # Create point feature
+            geojson_features.append(form_point_feature(x, y, new_point_name))
+            
+            # If this is not the first point, create a connecting line to the previous point
+            if previous_point:
+                geojson_features.append(form_connecting_line_feature(previous_point, [x, y], previous_point_name, new_point_name))
+
+            previous_point_name = new_point_name
+            new_point_name = f"Point {counter}"
+            counter += 1
+            
+            previous_point = [x, y]
+            
+            
+            
+
+        geojson = {
+            "type": "FeatureCollection",
+            "features": geojson_features
+        }
+
+        # Create Layer on Result Map with the new points and lines
+        print('Create result map layers...')
+        generic_map_result = step.result.get_result_by_codename('generic_map')
+        generic_map_result.add_geojson_layer(
+            geojson=geojson,
+            layer_id=f'{s_name}_point_locations',
+            layer_name=f'{s_name}_point_locations',
+            layer_title=f'{s_name} Point Locations',
+            layer_variable=f'{s_name}_point_locations',
+            popup_title=s_name,
+            selectable=True,
+            label_options={'label_property': 'point_name'},
+        )
 
     # Find max value on y-axis for output point plots
     max_y_value = 0
@@ -54,50 +106,7 @@ def main(
         max_y_value = max(cur_y, max_y_value)
 
     max_y_value = math.floor(max_y_value * 1.1) + 1
-
-    # Create plot for output points
-    for point in points['features']:
-        point_name = point['properties']['point_name']
-        point['properties']['plot'] = {
-            'title': f'Values for {point_name}',
-            'data': [series[point_name]],
-            'layout': {
-                'autosize': True,
-                'height': 415,
-                'margin': {
-                    'l': 80,
-                    'r': 80,
-                    't': 20,
-                    'b': 80
-                },
-                'xaxis': {
-                    'title': 'X',
-                },
-                'yaxis': {
-                    'title': 'Y',
-                    'range': [0, max_y_value],
-                }
-            }
-        }
-
-    pprint(points, compact=True)
-
-    # Create Layer on Result
-    print('Create result map layers...')
-    generic_map_result = step.result.get_result_by_codename('generic_map')
-    generic_map_result.reset()
-    generic_map_result.add_geojson_layer(
-        geojson=points,
-        layer_id='point_locations',
-        layer_name='point_locations',
-        layer_title='Point Locations',
-        layer_variable='point_locations',
-        popup_title='Culvert Location',
-        selectable=True,
-        plottable=True,
-        label_options={'label_property': 'point_name'},
-    )
-
+    
     # Add series to table result
     print('Create series tables...')
     generic_table_result = step.result.get_result_by_codename('generic_table')

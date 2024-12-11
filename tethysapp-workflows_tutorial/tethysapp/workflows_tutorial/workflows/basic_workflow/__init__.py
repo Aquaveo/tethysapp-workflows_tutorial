@@ -1,5 +1,5 @@
 from ..workflow_base import WorkflowBase
-from tethysext.workflows.steps import SpatialInputStep, JobStep, ResultsStep
+from tethysext.workflows.steps import SpatialInputStep, TableInputStep, JobStep, ResultsStep
 from .attributes import PointAttributes
 from .jobs import build_jobs_callback
 from .results import build_results_tabs
@@ -52,10 +52,21 @@ class BasicWorkflow(WorkflowBase):
         )
         workflow.steps.append(generic_spatial_input_step)
 
+        generic_table_input_step = TableInputStep(
+            name='Generic Table Input Step',
+            order=20,
+            help="Enter the following parameters for each dataset.",
+            options={
+                'dataset_title': 'Table Input',
+                'read_only_columns': ['Soil Texture'],
+            }
+        )
+        workflow.steps.append(generic_table_input_step)
+
 
         generic_execute_step = JobStep(
                 name='Generic Run Step',
-                order=20,
+                order=30,
                 help='Review input and then press the Run button to run the workflow. '
                 'Press Next after the execution completes to continue. [CHANGE THIS HELP TEXT]',
                 options={
@@ -73,7 +84,7 @@ class BasicWorkflow(WorkflowBase):
 
         generic_result_step = ResultsStep(
             name='Generic Review Results',
-            order=30,
+            order=40,
             help='Review the results from the run step. [CHANGE THIS HELP TEXT]',
             options={},
         )
