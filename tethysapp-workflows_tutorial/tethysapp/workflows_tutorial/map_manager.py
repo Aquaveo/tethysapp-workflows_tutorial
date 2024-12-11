@@ -110,35 +110,3 @@ class MapManager(MapManagerBase):
 
         # model_extent = boundary_layer.legend_extent
         return map_view, model_extent, layer_groups
-    
-    def get_plot_for_layer_feature(self, layer_name, feature_id):
-        """
-        Get plot data for given feature on given layer.
-
-        Args:
-            layer_name(str): Name/id of layer.
-            feature_id(str): PostGIS Feature ID of feature.
-
-        Returns:
-            str, list<dict>, dict: plot title, data series, and layout options, respectively.
-        """
-        title = 'Example Plot'
-        layout = {'xaxis': {'title': layer_name}, 'yaxis': {'title': 'Value (units)'}}
-
-        series1 = {
-            'name': feature_id + '1',
-            'mode': 'lines',
-            'x': [1, 2, 3, 4],
-            'y': [10, 15, 13, 17],
-        }
-
-        series2 = {
-            'name': feature_id + '2',
-            'mode': 'lines',
-            'x': [1, 2, 3, 4],
-            'y': [15, 20, 8, 12],
-        }
-
-        data = [series1, series2]
-
-        return title, data, layout

@@ -6,48 +6,20 @@
 * Copyright: (c) Aquaveo 2023
 ********************************************************************************
 """
-import glob
 import json
 import logging
-import mimetypes
 import os
-from rasterio import shutil as rio_shutil
-import re
-import requests
-import tempfile
-import zipfile
 
 from tethysext.workflows.services.base_spatial_manager import BaseSpatialManager
 
-from .dataset_types import DatasetTypes
 
 log = logging.getLogger(__name__)
 
 
 class SpatialManager(BaseSpatialManager):
     """
-    Managers GeoServer Layers for tRIBS Projects.
+    Basic Spatial Manager for the Workflows Tutorial App.
     """
-    WORKSPACE = 'tribs'
-    URI = 'http://portal.aquaveo.com/tribs'
-    SLD_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates', 'sld_templates')
-    S_RASTER_CONT = 'raster_continuous'
-    S_RASTER_DISC = 'raster_discrete'
-    S_FEATURES_SHP = 'features_shapefile'
-    S_FEATURES_SHP_LABELS = 'features_shapefile_labels'
-    S_NDVI = 'ndvi'
-    S_NAIP = 'naip'
-    S_VT = 'vegetation_types'
-    DATASET_TYPE_TO_STYLE = {
-        DatasetTypes.RASTER_CONT_ASCII: S_RASTER_CONT,
-        DatasetTypes.RASTER_CONT_GEOTIFF: S_RASTER_CONT,
-        DatasetTypes.RASTER_CONT_ASCII_TIMESERIES: S_RASTER_CONT,
-        DatasetTypes.RASTER_CONT_GEOTIFF_TIMESERIES: S_RASTER_CONT,
-        DatasetTypes.RASTER_DISC_ASCII: S_RASTER_DISC,
-        DatasetTypes.RASTER_DISC_GEOTIFF: S_RASTER_DISC,
-        DatasetTypes.RASTER_DISC_ASCII_TIMESERIES: S_RASTER_DISC,
-        DatasetTypes.RASTER_DISC_GEOTIFF_TIMESERIES: S_RASTER_DISC,
-    }
 
     # Override parent class GEOSERVER_CLUSTER_PORTS attribute with local environment var
     try:

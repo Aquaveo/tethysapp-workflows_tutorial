@@ -13,12 +13,32 @@ def main(
 ):
     # Extract extra args
     point_name = extra_args[0]
-    pow = int(extra_args[1]) + 1
     output_filename = extra_args[2]
 
+    print("Params JSON: ", params_json)
+
+    # Find the point in features that matches the point name
+    features = params_json['Generic Spatial Input Step']['parameters']['geometry']['features']
+    matching_feature = next((feature for feature in features if feature['properties']['point_name'] == point_name), None)
+    
+    if matching_feature:
+        initial_coordinates = matching_feature['geometry']['coordinates']
+    else:
+        raise ValueError(f"No feature found with the name {point_name}")
+    
+    print(f"\n\n\nPoints here: {initial_coordinates}\n\n\n")
+
+    table_data = params_json['Generic Table Input Step']['parameters']['dataset']
+    print(f"\n\n\nTable Data: {table_data}\n\n\n")
+
     print(f'Running job for point: {point_name}')
-    x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    y = [i**pow for i in x]
+    x = [initial_coordinates[0]]
+    y = [initial_coordinates[1]]
+    for x_change in table_data['X']:
+        x.append(initial_coordinates[0] + float(x_change))
+    for y_change in table_data['Y']:
+        y.append(initial_coordinates[1] + float(y_change))
+
     series = {
         'name': point_name,
         'x': x,
