@@ -1,144 +1,65 @@
+import json
 import logging
-from tethys_gizmos.gizmo_options import MapView, MVView
-from tethysext.workflows.services.map_manager import MapManagerBase
+import os
+
+from tethysext.workflows.services.base_spatial_manager import BaseSpatialManager
 
 
 log = logging.getLogger(__name__)
 
-class MapManager(MapManagerBase):
+
+class SpatialManager(BaseSpatialManager):
     """
-    Map manager for the workflows_tutorial app.
+    Basic Spatial Manager for the Workflows Tutorial App.
     """
-    MAP_VIEW_VERSION = '4.6.5'
-    MAX_ZOOM = 28
-    MIN_ZOOM = 4
-    DEFAULT_ZOOM = 13   
 
-    def get_map_preview_url(self):
+    # Override parent class GEOSERVER_CLUSTER_PORTS attribute with local environment var
+    try:
+        GEOSERVER_CLUSTER_PORTS = json.loads(os.environ.get("GEOSERVER_CLUSTER_PORTS"))
+    except (json.JSONDecodeError, TypeError):
+        GEOSERVER_CLUSTER_PORTS = [8081, 8082, 8083, 8084]
+    log.debug(f"GEOSERVER_CLUSTER_PORTS set to {GEOSERVER_CLUSTER_PORTS}")
+
+    def __init__(self, geoserver_engine, reload_ports=GEOSERVER_CLUSTER_PORTS):
         """
-        Get url for map preview image.
-
-        Returns:
-            str: preview image url.
-        """
-        # Default image url
-        layer_preview_url = None
-
-        try:
-            extent = self.map_extent
-
-            # Calculate preview layer height and width ratios
-            if extent:
-                # Calculate image dimensions
-                long_dif = abs(extent[0] - extent[2])
-                lat_dif = abs(extent[1] - extent[3])
-                hw_ratio = float(long_dif) / float(lat_dif)
-                max_dim = 300
-
-                if hw_ratio < 1:
-                    width_resolution = int(hw_ratio * max_dim)
-                    height_resolution = max_dim
-                else:
-                    height_resolution = int(max_dim / hw_ratio)
-                    width_resolution = max_dim
-
-                wms_endpoint = self.spatial_manager.get_wms_endpoint()
-
-                layer_preview_url = (
-                    '{}?'
-                    'service=WMS&'
-                    'version=1.1.0&'
-                    'request=GetMap&'
-                    'bbox={},{},{},{}&'
-                    'width={}&'
-                    'height={}&'
-                    'srs=EPSG:4326&'
-                    'format=image%2Fpng'
-                ).format(
-                    wms_endpoint,
-                    extent[0],
-                    extent[1],
-                    extent[2],
-                    extent[3],
-                    width_resolution,
-                    height_resolution
-                )
-        except Exception:
-            log.exception('An error occurred while trying to generate the preview image.')
-
-        return layer_preview_url
-    
-    def compose_map(self, request, *args, **kwargs):
-        """
-        Compose the MapView object.
+        Constructor
 
         Args:
-            scenario_id (int): ID of the scenario.
-
-        Returns:
-            MapView, 4-list, list: The MapView, map extent, and layer groups.
+            geoserver_engine(tethys_dataset_services.GeoServerEngine): Tethys geoserver engine.
+            reload_ports(list): List of ports to use for the geoserver cluster.
         """
-        # Get endpoint
-        _ = self.get_wms_endpoint()
+        super().__init__(geoserver_engine)
+        if reload_ports is not None:
+            # Overriding the GEOSERVER_CLUSTER_PORTS attribute above
+            # is not sufficient, so we set it on the instance too
+            self.GEOSERVER_CLUSTER_PORTS = reload_ports
 
-        # Get default view and extent for model
-        view, model_extent = self.get_map_extent()
+    def get_extent_for_project(self, project=None, buffer=None):
 
-        map_layers = []
-        layer_groups = []
-        map_view = MapView(
-            height='600px',
-            width='100%',
-            controls=['ZoomSlider', 'Rotate', 'FullScreen'],
-            layers=[],
-            view=MVView(
-                projection='EPSG:4326',
-                center=self.DEFAULT_CENTER,
-                zoom=13,
-                maxZoom=28,
-                minZoom=4,
-            ),
-            basemap=[
-                'ESRI',
-                'OpenStreetMap',
-            ],
-            legend=True
-        )
+        default_extent = [-124.67, 25.84, -66.95, 49.38]  # Default for continental USA
+        if project is None:
+            return default_extent
 
-        boundary_layers = []
-        map_view.layers.extend(map_layers)
+        project_extent = project.get_attribute('project_extent')
+        if project_extent is None:
+            corners = [(default_extent[0], default_extent[1]), (default_extent[2], default_extent[3])]
+        else:
+            corners = [(project_extent[0], project_extent[1]), (project_extent[2], project_extent[3])]
+        # get min_x, min_y, max_x, max_y from corners
+        min_x = min([corner[0] for corner in corners])
+        min_y = min([corner[1] for corner in corners])
+        max_x = max([corner[0] for corner in corners])
+        max_y = max([corner[1] for corner in corners])
 
-        # model_extent = boundary_layer.legend_extent
-        return map_view, model_extent, layer_groups
-    
-    def get_plot_for_layer_feature(self, layer_name, feature_id):
-        """
-        Get plot data for given feature on given layer.
+        if buffer is not None:
+            x_dist = max_x - min_x
+            y_dist = max_y - min_y
+            x_buff = x_dist * buffer
+            y_buff = y_dist * buffer
 
-        Args:
-            layer_name(str): Name/id of layer.
-            feature_id(str): PostGIS Feature ID of feature.
+            min_x = min_x - x_buff
+            min_y = min_y - y_buff
+            max_x = max_x + x_buff
+            max_y = max_y + y_buff
 
-        Returns:
-            str, list<dict>, dict: plot title, data series, and layout options, respectively.
-        """
-        title = 'Example Plot'
-        layout = {'xaxis': {'title': layer_name}, 'yaxis': {'title': 'Value (units)'}}
-
-        series1 = {
-            'name': feature_id + '1',
-            'mode': 'lines',
-            'x': [1, 2, 3, 4],
-            'y': [10, 15, 13, 17],
-        }
-
-        series2 = {
-            'name': feature_id + '2',
-            'mode': 'lines',
-            'x': [1, 2, 3, 4],
-            'y': [15, 20, 8, 12],
-        }
-
-        data = [series1, series2]
-
-        return title, data, layout
+        return [min_x, min_y, max_x, max_y]
