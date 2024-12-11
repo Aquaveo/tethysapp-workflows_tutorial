@@ -1,5 +1,5 @@
 from ..workflow_base import WorkflowBase
-from tethysext.workflows.steps import SpatialInputStep
+from tethysext.workflows.steps import SpatialInputStep, TableInputStep
 from .attributes import PointAttributes
 
 class BasicWorkflow(WorkflowBase):
@@ -49,6 +49,18 @@ class BasicWorkflow(WorkflowBase):
             spatial_manager=spatial_manager,
         )
         workflow.steps.append(generic_spatial_input_step)
+
+        generic_table_input_step = TableInputStep(
+            name='Generic Table Input Step',
+            order=20,
+            help="Enter the following parameters for each dataset.",
+            options={
+                'dataset_title': 'Table Input',
+                'read_only_columns': ['Soil Texture'],
+            }
+        )
+        workflow.steps.append(generic_table_input_step)
+
 
 
         return workflow
