@@ -1,11 +1,3 @@
-"""
-********************************************************************************
-* Name: tribs_spatial_manager
-* Author: glarsen
-* Created On: December, 2023
-* Copyright: (c) Aquaveo 2023
-********************************************************************************
-"""
 import json
 import logging
 import os
@@ -33,8 +25,8 @@ class SpatialManager(BaseSpatialManager):
         Constructor
 
         Args:
-            workspace(str): The workspace to use when creating layers and styles.
             geoserver_engine(tethys_dataset_services.GeoServerEngine): Tethys geoserver engine.
+            reload_ports(list): List of ports to use for geoserver cluster.
         """
         super().__init__(geoserver_engine)
         if reload_ports is not None:
