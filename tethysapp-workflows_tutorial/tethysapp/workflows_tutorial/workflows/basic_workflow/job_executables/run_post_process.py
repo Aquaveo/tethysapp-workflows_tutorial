@@ -77,9 +77,6 @@ def main(
             
             previous_point = [x, y]
             
-            
-            
-
         geojson = {
             "type": "FeatureCollection",
             "features": geojson_features
