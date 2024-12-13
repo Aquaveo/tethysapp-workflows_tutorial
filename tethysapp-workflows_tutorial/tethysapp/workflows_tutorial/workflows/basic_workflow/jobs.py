@@ -13,13 +13,12 @@ def build_jobs_callback(condor_workflow):
     Returns:
         list<dicts>: Condor Job dicts, one for each job.
     """
-    breakpoint
     jobs = []
     condor_env = get_condor_env()
     workflow = condor_workflow.tethys_workflow
 
     # Get the selected scenarios
-    points_step = workflow.get_step_by_name('Generic Spatial Input Step')
+    points_step = workflow.get_step_by_name('Point In Boundary Step')
     points_geometry = points_step.get_parameter('geometry')
 
     post_process_tif = []
