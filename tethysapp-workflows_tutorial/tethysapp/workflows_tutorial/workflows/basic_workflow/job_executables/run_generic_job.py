@@ -2,6 +2,7 @@
 
 import json
 from pprint import pprint
+from shapely.geometry import Point, Polygon
 
 from tethysext.workflows.services.workflows.decorators import workflow_step_job
 
@@ -17,28 +18,34 @@ def main(
 
     print("Params JSON: ", params_json)
 
-    # Find the point in features that matches the point name
-    features = params_json['Generic Spatial Input Step']['parameters']['geometry']['features']
-    matching_feature = next((feature for feature in features if feature['properties']['point_name'] == point_name), None)
-    
-    if matching_feature:
-        initial_coordinates = matching_feature['geometry']['coordinates']
-    else:
-        raise ValueError(f"No feature found with the name {point_name}")
-    
-    print(f"\n\n\nPoints here: {initial_coordinates}\n\n\n")
+    boundary_points = params_json['Boundary Input Step']['parameters']['geometry']['features'][0]['geometry']['coordinates'][0]
+    boundary_polygon = Polygon(boundary_points)
+    print(f"\n\n\nBoundary Points: {boundary_points}\n\n\n")
 
-    table_data = params_json['Generic Table Input Step']['parameters']['dataset']
-    print(f"\n\n\nTable Data: {table_data}\n\n\n")
+    # Find the point id and original point coordinates from the Point In Boundary Step
+    features = params_json['Point In Boundary Step']['parameters']['geometry']['features']
+    for feature in features:
+        if feature['properties']['point_name'] == point_name:
+            print(f"\n\n\nFeature: {feature}\n\n\n")
+            point_id = feature['properties']['id']
+            original_point_coordinates = feature['geometry']['coordinates']
+
+    # Get the transformations for the point from the Spatial Dataset Step
+    transformations = params_json['Spatial Dataset Step']['parameters']['datasets'][point_id]
+    print("Transformations: ", transformations)
 
     print(f'Running job for point: {point_name}')
-    x = [initial_coordinates[0]]
-    y = [initial_coordinates[1]]
-    for x_change in table_data['X']:
-        x.append(initial_coordinates[0] + float(x_change))
-    for y_change in table_data['Y']:
-        y.append(initial_coordinates[1] + float(y_change))
+    x = [original_point_coordinates[0]]
+    y = [original_point_coordinates[1]]
 
+    # Apply the transformations to the point and check if each new point is within the boundary
+    for index in range(len(transformations['X'])):
+        new_coords = [original_point_coordinates[0] + float(transformations['X'][index]), original_point_coordinates[1] + float(transformations['Y'][index])]
+        if boundary_polygon.contains(Point(new_coords)):
+            x.append(new_coords[0])
+            y.append(new_coords[1])
+
+    # Create the series data
     series = {
         'name': point_name,
         'x': x,

@@ -10,10 +10,10 @@ def build_results_tabs(geoserver_name, map_manager, spatial_manager):
     Returns:
         list<ResourceWorkflowResult>: Results definitions.
     """
-    generic_map_result = SpatialWorkflowResult(
-        name='Generic Map',
-        codename='generic_map',
-        description='Generic data at each point location specified.',
+    map_result = SpatialWorkflowResult(
+        name='Map',
+        codename='map_result',
+        description='Resulting transformations on original points displayed on a map.',
         order=10,
         options={
             'layer_group_title': 'Points',
@@ -24,10 +24,10 @@ def build_results_tabs(geoserver_name, map_manager, spatial_manager):
         spatial_manager=spatial_manager
     )
 
-    generic_table_result = DatasetWorkflowResult(
-        name='Generic Table',
-        codename='generic_table',
-        description='Generic table dataset result.',
+    table_result = DatasetWorkflowResult(
+        name='Table',
+        codename='table_result',
+        description='Table dataset result.',
         order=20,
         options={
             'data_table_kwargs': {
@@ -37,10 +37,10 @@ def build_results_tabs(geoserver_name, map_manager, spatial_manager):
         },
     )
 
-    generic_plot_result = PlotWorkflowResult(
-        name='Generic Plot',
-        codename='generic_plot',
-        description='Generic plot dataset result.',
+    plot_result = PlotWorkflowResult(
+        name='Plot',
+        codename='plot_result',
+        description='Plot dataset result.',
         order=30,
         options={
             'renderer': 'plotly',
@@ -53,12 +53,12 @@ def build_results_tabs(geoserver_name, map_manager, spatial_manager):
         },
     )
 
-    generic_report_result = ReportWorkflowResult(
+    report_result = ReportWorkflowResult(
         geoserver_name, 
         map_manager,
         spatial_manager,
-        name='Generic Report',
+        name='Report',
     )
 
 
-    return [generic_map_result, generic_table_result, generic_plot_result, generic_report_result]
+    return [map_result, table_result, plot_result, report_result]
