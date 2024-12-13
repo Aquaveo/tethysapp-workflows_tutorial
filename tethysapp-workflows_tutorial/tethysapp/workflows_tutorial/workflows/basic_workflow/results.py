@@ -58,6 +58,7 @@ def build_results_tabs(geoserver_name, map_manager, spatial_manager):
         map_manager,
         spatial_manager,
         name='Report',
+        order=40
     )
 
 
