@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from ..utilities import safe_str, get_condor_env
 
 REQUEST_CPUS_PER_JOB = 1
