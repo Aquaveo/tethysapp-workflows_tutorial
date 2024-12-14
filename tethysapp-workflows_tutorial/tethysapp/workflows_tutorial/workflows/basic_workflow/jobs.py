@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from ..utilities import safe_str, get_condor_env
 
 REQUEST_CPUS_PER_JOB = 1
@@ -18,7 +17,7 @@ def build_jobs_callback(condor_workflow):
     workflow = condor_workflow.tethys_workflow
 
     # Get the selected scenarios
-    points_step = workflow.get_step_by_name('Generic Spatial Input Step')
+    points_step = workflow.get_step_by_name('Point In Boundary Step')
     points_geometry = points_step.get_parameter('geometry')
 
     # Create one job per point
@@ -43,7 +42,7 @@ def build_jobs_callback(condor_workflow):
                 'request_cpus': REQUEST_CPUS_PER_JOB
             }
         }
-        
+
         # Add to workflow jobs
         jobs.append(job)
 
