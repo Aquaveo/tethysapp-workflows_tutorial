@@ -10,8 +10,11 @@ requirements:
   skip: false
   conda:
     channels:
+      - conda-forge
     packages:
-
+      - gdal
+      - pyproj
+      - timezonefinder
   pip:
 
   npm:
