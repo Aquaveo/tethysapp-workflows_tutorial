@@ -1,0 +1,86 @@
+Given Arguments:
+Namespace(db_url='postgresql://postgres:mysecretpassword@localhost:5435/workflows_tutorial_workflows_tutorial_db', workflow_id='a0a8ffc9-1a23-496e-9a7f-02ee21b981e4', workflow_step_id='d335b0a6-13ab-432d-a6ef-74c6ea50691f', gs_private_url='http://admin:@localhost:8181/geoserver/rest/', gs_public_url='http://admin:@localhost:8181/geoserver/rest/', workflow_class='tethysapp.workflows_tutorial.workflows.basic_workflow.BasicWorkflow', workflow_params_file='workflow_params.json', app_namespace='agwa')
+Workflow Parameters:
+{'Boundary Input Step': {'help': 'Use the Point tool to define a boundary.',
+                         'id': '6e6a2c27-051b-40de-b7ea-706f95c21687',
+                         'name': 'Boundary Input Step',
+                         'parameters': {'geometry': {'crs': {'properties': {'name': 'EPSG:4326'},
+                                                             'type': 'name'},
+                                                     'features': [{'geometry': {'coordinates': [[[-117.341079,
+                                                                                                  37.07944],
+                                                                                                 [-117.341079,
+                                                                                                  41.514267],
+                                                                                                 [-104.278132,
+                                                                                                  41.514267],
+                                                                                                 [-104.278132,
+                                                                                                  37.07944],
+                                                                                                 [-117.341079,
+                                                                                                  37.07944]]],
+                                                                                'type': 'Polygon'},
+                                                                   'properties': {'id': 'drawing_layer.662224fd-f1e6-4662-b254-d4e9a783f995'},
+                                                                   'type': 'Feature'}],
+                                                     'properties': {'default_point': 'point'},
+                                                     'type': 'FeatureCollection'},
+                                        'imagery': None},
+                         'type': 'spatial_input_workflow_step',
+                         'workflow_id': 'a0a8ffc9-1a23-496e-9a7f-02ee21b981e4'},
+ 'Dataset Input Step': {'help': 'Select a dataset here',
+                        'id': 'b9aff3bc-a766-4c1c-bd05-a7ebe5bfa9e1',
+                        'name': 'Dataset Input Step',
+                        'parameters': {'form-values': {'datasets': ['Decreasing '
+                                                                    'Data']}},
+                        'type': 'form_input_workflow_step',
+                        'workflow_id': 'a0a8ffc9-1a23-496e-9a7f-02ee21b981e4'},
+ 'Point In Boundary Step': {'help': 'Use the Point tool to define a location '
+                                    'or locations in the boundary.',
+                            'id': '009f49de-fc2d-4985-a4fd-a40882bcbb0b',
+                            'name': 'Point In Boundary Step',
+                            'parameters': {'geometry': {'crs': {'properties': {'name': 'EPSG:4326'},
+                                                                'type': 'name'},
+                                                        'features': [{'geometry': {'coordinates': [-115.670237,
+                                                                                                   40.511426],
+                                                                                   'type': 'Point'},
+                                                                      'properties': {'id': 'drawing_layer.b4216051-a53a-497d-bde4-e68650c3b980',
+                                                                                     'point_name': 'test'},
+                                                                      'type': 'Feature'}],
+                                                        'properties': {'default_point': 'point'},
+                                                        'type': 'FeatureCollection'},
+                                           'imagery': None},
+                            'type': 'spatial_input_workflow_step',
+                            'workflow_id': 'a0a8ffc9-1a23-496e-9a7f-02ee21b981e4'},
+ 'Set Status': {'help': 'Set the status of the workflow to ready to run.',
+                'id': '32a5b8d8-1b25-4354-b7e2-7794a6849bce',
+                'name': 'Set Status',
+                'parameters': {'comments': ''},
+                'type': 'set_status_workflow_step',
+                'workflow_id': 'a0a8ffc9-1a23-496e-9a7f-02ee21b981e4'},
+ 'Spatial Dataset Step': {'help': 'This step will be used to select a spatial '
+                                  'dataset.',
+                          'id': 'd93a49e6-da7d-43c6-b675-c5c84acba3fa',
+                          'name': 'Spatial Dataset Step',
+                          'parameters': {'datasets': {'drawing_layer.b4216051-a53a-497d-bde4-e68650c3b980': {'X': [1.0,
+                                                                                                                   3.0,
+                                                                                                                   5.0,
+                                                                                                                   7.0],
+                                                                                                             'Y': [2.0,
+                                                                                                                   4.0,
+                                                                                                                   6.0,
+                                                                                                                   8.0]}}},
+                          'type': 'spatial_dataset_workflow_step',
+                          'workflow_id': 'a0a8ffc9-1a23-496e-9a7f-02ee21b981e4'},
+ 'Table Input Step': {'help': 'Enter the following parameters for each '
+                              'dataset.',
+                      'id': '4941d063-6d4f-49a6-a6c3-301c5002a235',
+                      'name': 'Table Input Step',
+                      'parameters': {'dataset': {'X': ['1', '3'],
+                                                 'Y': ['2', '4']}},
+                      'type': 'table_input_step',
+                      'workflow_id': 'a0a8ffc9-1a23-496e-9a7f-02ee21b981e4'}}
+Given Arguments 2:
+Namespace(db_url='postgresql://postgres:mysecretpassword@localhost:5435/workflows_tutorial_workflows_tutorial_db', workflow_id='a0a8ffc9-1a23-496e-9a7f-02ee21b981e4', workflow_step_id='d335b0a6-13ab-432d-a6ef-74c6ea50691f', gs_private_url='http://admin:@localhost:8181/geoserver/rest/', gs_public_url='http://admin:@localhost:8181/geoserver/rest/', workflow_class='tethysapp.workflows_tutorial.workflows.basic_workflow.BasicWorkflow', workflow_params_file='workflow_params.json', app_namespace='agwa')
+Updating status...
+['Complete', 'Complete']
+Updating Status Complete
+Updating status...
+Closing session...
+Processing Complete

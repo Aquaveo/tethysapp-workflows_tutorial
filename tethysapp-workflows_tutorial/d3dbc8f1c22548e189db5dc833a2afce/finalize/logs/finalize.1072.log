@@ -1,0 +1,44 @@
+000 (1072.000.000) 2024-12-16 14:39:47 Job submitted from host: <10.255.255.254:9618?addrs=10.255.255.254-9618&alias=Uvs-Nuur.aquaveo.local&noUDP&sock=schedd_45590_86c6>
+    DAG Node: finalize
+...
+040 (1072.000.000) 2024-12-16 14:39:47 Started transferring input files
+	Transferring to host: <10.255.255.254:9618?addrs=10.255.255.254-9618&alias=Uvs-Nuur.aquaveo.local&noUDP&sock=slot1_1_45670_657a_258>
+...
+040 (1072.000.000) 2024-12-16 14:39:47 Finished transferring input files
+...
+001 (1072.000.000) 2024-12-16 14:39:48 Job executing on host: <10.255.255.254:9618?addrs=10.255.255.254-9618&alias=Uvs-Nuur.aquaveo.local&noUDP&sock=startd_45590_86c6>
+	SlotName: slot1_1@Uvs-Nuur.aquaveo.local
+	CondorScratchDir = "/var/lib/condor/execute/dir_1636317"
+	Cpus = 1
+	Disk = 2048
+	GPUs = 0
+	Memory = 128
+...
+006 (1072.000.000) 2024-12-16 14:39:49 Image size of job updated: 2
+	5  -  MemoryUsage of job (MB)
+	4340  -  ResidentSetSize of job (KB)
+...
+040 (1072.000.000) 2024-12-16 14:39:49 Started transferring output files
+...
+040 (1072.000.000) 2024-12-16 14:39:49 Finished transferring output files
+...
+005 (1072.000.000) 2024-12-16 14:39:49 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	7608  -  Run Bytes Sent By Job
+	4068  -  Run Bytes Received By Job
+	7608  -  Total Bytes Sent By Job
+	4068  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :       28        5      2048 
+	   GPUs                 :                           0 
+	   Memory (MB)          :        5        1       128 
+	   TimeExecute (s)      :        1                    
+	   TimeSlotBusy (s)     :        2                    
+
+	Job terminated of its own accord at 2024-12-16T21:39:49Z with exit-code 0.
+...

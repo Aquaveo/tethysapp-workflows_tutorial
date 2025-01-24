@@ -1,0 +1,13 @@
+JOB post_processing post_processing/post_processing.job
+JOB finalize finalize/finalize.job
+JOB run_test run_test/run_test.job
+
+
+PARENT post_processing CHILD finalize
+PARENT run_test CHILD post_processing
+
+
+
+CATEGORY run_test generic_job
+
+
